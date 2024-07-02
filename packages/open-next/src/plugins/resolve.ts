@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-import { Plugin } from "esbuild";
+import { Plugin, PluginBuild } from "esbuild";
 import type {
   DefaultOverrideOptions,
   ImageLoader,
@@ -42,9 +42,10 @@ export function openNextResolvePlugin({
 }: IPluginSettings): Plugin {
   return {
     name: "opennext-resolve",
-    setup(build) {
+    setup(build: PluginBuild) {
       logger.debug(`OpenNext Resolve plugin for ${fnName}`);
       build.onLoad({ filter: /core\/resolve.js/g }, async (args) => {
+        logger.debug("Plugin path: ", args.path);
         let contents = readFileSync(args.path, "utf-8");
         //TODO: refactor this. Every override should be at the same place so we can generate this dynamically
         if (overrides?.wrapper) {
